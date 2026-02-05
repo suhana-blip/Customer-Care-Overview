@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Care Overview - December 2025</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003d5c 0%, #001f3f 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #003d5c;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .header p:hover {
+            background: #f0f0f0;
+        }
+
+        .editable-title {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .editable-title:hover {
+            background: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #003d5c 0%, #001f3f 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .action-btn.danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 25px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #003d5c 0%, #001f3f 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #003d5c 0%, #001f3f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container h3 {
+            color: #003d5c;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .issues-list {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .issue-category {
+            margin-bottom: 25px;
+        }
+
+        .issue-category h4 {
+            color: #003d5c;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .issue-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .issue-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #003d5c;
+        }
+
+        .issue-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .issue-reason {
+            color: #666;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .reason-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-top: 5px;
+            font-style: normal;
+        }
+
+        .reason-process {
+            background: #ffe0e0;
+            color: #d32f2f;
+        }
+
+        .reason-attention {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .reason-service {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .reason-technical {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .enhancements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .enhancement-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .enhancement-card h4 {
+            color: #003d5c;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .enhancement-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .enhancement-card li {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #003d5c;
+        }
+
+        .enhancement-card li:before {
+            content: "✓";
+            color: #003d5c;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 30px auto;
+            padding: 0;
+            border-radius: 15px;
+            max-width: 1000px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #003d5c 0%, #001f3f 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8em;
+        }
+
+        .close {
+            font-size: 2em;
+            cursor: pointer;
+            color: white;
+            background: none;
+            border: none;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: scale(1.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .data-table input {
+            width: 60px;
+            padding: 6px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+
+        .data-table input[type="text"] {
+            width: 100%;
+        }
+
+        .data-table textarea {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.95em;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .data-table input:focus,
+        .data-table textarea:focus {
+            outline: none;
+            border-color: #003d5c;
+            box-shadow: 0 0 0 2px rgba(0, 61, 92, 0.1);
+        }
+
+        .dept-name {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .section-header {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 30px 0 15px 0;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .add-btn, .delete-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin: 5px;
+        }
+
+        .add-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 2000;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .edit-icon {
+            margin-left: 10px;
+            color: #003d5c;
+            font-size: 0.8em;
+            opacity: 0.6;
+        }
+
+        @media print {
+            .action-buttons {
+                display: none !important;
+            }
+            
+            .edit-icon {
+                display: none !important;
+            }
+            
+            .editable-title {
+                cursor: default !important;
+            }
+            
+            body {
+                background: white;
+            }
+            
+            .dashboard-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Customer Care Overview</h1>
+            <p class="" id="reportTitle" style="cursor: default;">December 2025 Performance Report </p>
+            
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('compliments')">⭐ Compliments</button>
+            <button class="tab" onclick="showTab('complaints')">⚠️ Complaints</button>
+            <button class="tab" onclick="showTab('improvements')">🔧 Improvements</button>
+            <button class="tab" onclick="showTab('enhancements')">🚀 Enhancements</button>
+        </div>
+
+        <!-- Compliments Tab -->
+        <div id="compliments" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label" style="margin-bottom: 10px;">Most Recognized Silo</div>
+                    <div class="stat-number" id="topSiloCount">16</div>
+                    <div class="stat-label" style="margin-top: 10px;" id="topSiloName">Client Support</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label" style="margin-bottom: 10px;">Most Recognized Employee</div>
+                    <div class="stat-number" style="font-size: 2em;" id="topEmployee">Shikaar Ramesh</div>
+                    <div class="stat-label" style="margin-top: 10px;" id="topEmployeeDetails">Client Support - 6 Compliments</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="" id="complimentsChartTitle" style="cursor: default;">Compliments by Silo - Monthly Breakdown </h3>
+                <canvas id="complimentsBySilo" width="1340" height="670" style="display: block; box-sizing: border-box; height: 670px; width: 1340px;"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="" id="complimentsYoYTitle" style="cursor: default;">Year-over-Year Comparison: 2024 vs 2025 </h3>
+                <canvas id="complimentsYoY"></canvas>
+            </div>
+        </div>
+
+        <!-- Complaints Tab -->
+        <div id="complaints" class="tab-content">
+            <div class="chart-container">
+                <h3 class="" id="complaintsChartTitle" style="cursor: default;">Complaints by Department - Monthly Breakdown </h3>
+                <canvas id="complaintsByDept"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="" id="complaintsYoYTitle" style="cursor: default;">Year-over-Year Comparison: 2024 vs 2025 </h3>
+                <canvas id="complaintsYoY"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>Root Cause Analysis</h3>
+                <canvas id="complaintReasons"></canvas>
+            </div>
+
+            <div class="issues-list" id="complaintsDetailedLog"></div>
+        </div>
+
+        <!-- Improvements Tab -->
+        <div id="improvements" class="tab-content">
+            <div class="chart-container">
+                <h3 class="" id="improvementsChartTitle" style="cursor: default;">Improvements by Department - Monthly Breakdown </h3>
+                <canvas id="improvementsByDept"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="" id="improvementsYoYTitle" style="cursor: default;">Year-over-Year Comparison: 2024 vs 2025 </h3>
+                <canvas id="improvementsYoY"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>Improvement Root Causes</h3>
+                <canvas id="improvementReasons"></canvas>
+            </div>
+
+            <div class="issues-list" id="improvementsDetailedLog"></div>
+        </div>
+
+        <!-- Enhancements Tab -->
+        <div id="enhancements" class="tab-content">
+            <div class="enhancements-grid" id="enhancementsGrid"></div>
+
+            <div class="chart-container" style="margin-top: 30px;">
+                <h3>Enhancements Impact Summary</h3>
+                <div style="padding: 20px; text-align: center;">
+                    <p style="font-size: 1.2em; color: #666; line-height: 1.8;" id="enhancementsSummary">
+                        Multiple system, process, and customer experience enhancements were implemented in December 2025 
+                        to address recurring issues and improve overall service quality. These enhancements focused on 
+                        strengthening process adherence, improving attention to detail, and enhancing technical infrastructure.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Edit Data</h2>
+                <button class="close" onclick="closeEditModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">Data saved successfully! ✓</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Global data storage
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        let dashboardData = {
+  'reportTitle': 'January 2026',
+  'complimentsChartTitle': 'Compliments by Silo - Monthly Breakdown',
+  'complaintsChartTitle': 'Complaints by Department - Monthly Breakdown',
+  'improvementsChartTitle': 'Improvements by Department - Monthly Breakdown',
+  'compliments': {
+    'totalCompliments': null,
+    'yoyGrowth': '',
+    'topSilo': 'Client Support',
+    'topSiloCount': 26,
+    'topEmployee': 'Shikaar Rakesh',
+    'topEmployeeDetails': 'Client Support - 9 Compliments',
+    'departments': {
+      'Amplify': [
+        12,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      'Client Support': [
+        26,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      'iX': [
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      'Trickle': [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      'Pages': [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    'yearly': {
+      '2024': [
+        38,
+        42,
+        45,
+        41,
+        43,
+        44,
+        40,
+        46,
+        42,
+        45,
+        43,
+        46
+      ],
+      '2025': [
+        44,
+        48,
+        50,
+        47,
+        51,
+        52,
+        48,
+        53,
+        49,
+        52,
+        50,
+        48
+      ]
+    }
+  },
+  'complaints': {
+    'departments': {
+      'Development': [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      'Amplify - DCM': [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      'Amplify - Design': [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      'Client Support': [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      'Pages - Websites': [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      'Sales': [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    'yearly': {
+      '2024': [
+        2,
+        1,
+        2,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      '2025': [
+        1,
+        2,
+        1,
+        1,
+        0,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    'detailedLog': {
+      'Amplify - DCM': [
+        {
+          'client': 'Haval Hatfield',
+          'issue': 'DCM failed to submit top-up timeously extended TAT of campaign.',
+          'reason': 'Bad service',
+          'reasonClass': 'reason-service'
+        },
+        {
+          'client': 'Chery Bruma',
+          'issue': 'DCM sent designs for approval without ensuring all designs were included.',
+          'reason': 'Attention to detail',
+          'reasonClass': 'reason-attention'
+        },
+        {
+          'client': 'Hatfield Motor Group',
+          'issue': 'DCM did not send video campaign for approval based on internal instruction from the dealer, however failed to put this on record via email.',
+          'reason': 'Process not followed',
+          'reasonClass': 'reason-process'
+        }
+      ],
+      'Amplify - Design': [
+        {
+          'client': 'Westvaal Motor Group',
+          'issue': 'Designs not aligned to the brief.',
+          'reason': 'Attention to detail',
+          'reasonClass': 'reason-attention'
+        },
+        {
+          'client': 'Westvaal Motor Group',
+          'issue': 'Incorrect copy on banner reading \'2025\' instead of \'2026\'.',
+          'reason': 'Attention to detail',
+          'reasonClass': 'reason-attention'
+        }
+      ],
+      'Client Support': [
+        {
+          'client': 'Audi Centre Pinetown',
+          'issue': 'Unable to reroute leads to salesperson.',
+          'reason': 'Process not followed',
+          'reasonClass': 'reason-process'
+        },
+        {
+          'client': 'McCarthy VW Used Arcadia',
+          'issue': 'Client not receiving lead notifications.',
+          'reason': 'Process not followed',
+          'reasonClass': 'reason-process'
+        }
+      ],
+      'Pages - Websites': [
+        {
+          'client': 'Gys Pitzer Wonderboom',
+          'issue': 'Stock discrepancy between group and dealer site due to unnecessary parameters in place.',
+          'reason': 'Attention to detail',
+          'reasonClass': 'reason-attention'
+        }
+      ],
+      'Sales': [
+        {
+          'client': 'Gys Pitzer Motors',
+          'issue': 'Client advised of incorrect notice period.',
+          'reason': 'Process not followed',
+          'reasonClass': 'reason-process'
+        }
+      ],
+      'Development': [
+        {
+          'client': 'AA Money',
+          'issue': 'Filtered search on leads not functioning.',
+          'reason': 'Query limited to 1000 records',
+          'reasonClass': 'reason-technical'
+        },
+        {
+          'client': 'Alpine VW Hillcrest',
+          'issue': 'Unable to load stock images.',
+          'reason': 'Client using old SSL certificates',
+          'reasonClass': 'reason-technical'
+        },
+        {
+          'client': 'MMG.Africa Approved',
+          'issue': 'Lead delivered to member not listed under the dealer.',
+          'reason': 'Member was set as active lead recipient on DG before migration to SM',
+          'reasonClass': 'reason-technical'
+        },
+        {
+          'client': 'Mahindra Amanzimtoti',
+          'issue': 'Error generating Trickle Exceptions report.',
+          'reason': 'System error',
+          'reasonClass': 'reason-technical'
+        }
+      ]
+    }
+  },
+  'improvements': {
+    'departments': {
+      'Development': [
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      'Accounts': [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      'Client Support': [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      'Sales': [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      'Design': [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      'Pages - Websites': [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    'yearly': {
+      '2024': [
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      '2025': [
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        2
+      ]
+    },
+    'detailedLog': {
+      'Accounts': [
+        {
+          'client': '911 Media',
+          'issue': 'No follow-up on telephonic/WhatsApp communication via email.',
+          'reason': 'Process not in place',
+          'reasonClass': 'reason-process'
+        },
+        {
+          'client': 'Westvaal Head Office',
+          'issue': 'Profile not set-up correctly.',
+          'reason': 'Process not in place',
+          'reasonClass': 'reason-process'
+        }
+      ],
+      'Client Support': [
+        {
+          'client': 'Hoopers',
+          'issue': 'Holiday hours from September not removed.',
+          'reason': 'Process not followed',
+          'reasonClass': 'reason-process'
+        },
+        {
+          'client': 'Suzuki JHB South',
+          'issue': 'Incorrect banner sizes on randomizer.',
+          'reason': 'Process not followed',
+          'reasonClass': 'reason-process'
+        }
+      ],
+      'Design': [
+        {
+          'client': 'Alpine Truck and Bus',
+          'issue': 'Spelling errors on banners.',
+          'reason': 'Attention to detail',
+          'reasonClass': 'reason-attention'
+        }
+      ],
+      'Sales': [
+        {
+          'client': 'Jetour Durban City',
+          'issue': 'Proposal not sent to client to sign-off, onboarding their stock without written consent.',
+          'reason': 'Process not followed',
+          'reasonClass': 'reason-process'
+        }
+      ],
+      'Development': [
+        {
+          'client': 'Autorama & Hoopers',
+          'issue': 'Cannot load members profile photo due to error received when saving.',
+          'reason': 'Logic bug',
+          'reasonClass': 'reason-technical'
+        },
+        {
+          'client': 'Godrich Toyota',
+          'issue': 'Members not set up for lead types appearing as active lead recipients on contact cleanser.',
+          'reason': 'Logic flaw',
+          'reasonClass': 'reason-technical'
+        },
+        {
+          'client': 'Suzuki Amanzimtoti',
+          'issue': 'Task not created for signed proposal.',
+          'reason': 'Attention to detail',
+          'reasonClass': 'reason-attention'
+        },
+        {
+          'client': 'McCarthy VW Used Arcadia',
+          'issue': '2 member profiles on DG but 1 on SM.',
+          'reason': 'Members created on proposal system not mirrored to SM',
+          'reasonClass': 'reason-technical'
+        }
+      ],
+      'Pages - Websites': [
+        {
+          'client': 'Process Improvement',
+          'issue': 'Team to add a notice if they are given an instruction to bring a site down so all silos are aware.',
+          'reason': 'Process not in place',
+          'reasonClass': 'reason-process'
+        }
+      ]
+    }
+  },
+  'enhancements': {
+    'categories': {
+      'System Enhancements': [
+        'Reset Spec ID feature added to Smart Manager.',
+        'Feature on Contact Cleanser to list active WhatsApp Lead recipients.'
+      ],
+      'Process Improvements': [
+        'Mailers which direct clients to our websites must be paused in the event of our websites being down.'
+      ],
+      'Customer Experience': []
+    },
+    'summary': ''
+  }
+};
+
+        const chartColors = {
+            primary: '#003d5c',
+            secondary: '#001f3f',
+            success: '#28a745',
+            warning: '#ffc107',
+            danger: '#dc3545',
+            info: '#17a2b8',
+            ocean1: '#006994',
+            ocean2: '#0099cc',
+            teal: '#008080',
+            aqua: '#00ced1'
+        };
+
+        let charts = {};
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
+            renderAllCharts();
+            updateAllStats();
+            renderDetailedLogs();
+            renderEnhancements();
+            updateTitles();
+        });
+
+        // Edit title functions
+        
+
+        
+
+        function updateTitles() {
+            document.getElementById('reportTitle').innerHTML = dashboardData.reportTitle + ' <span class="edit-icon">✏️</span>';
+            document.getElementById('complimentsChartTitle').innerHTML = dashboardData.complimentsChartTitle + ' <span class="edit-icon">✏️</span>';
+            document.getElementById('complaintsChartTitle').innerHTML = dashboardData.complaintsChartTitle + ' <span class="edit-icon">✏️</span>';
+            document.getElementById('improvementsChartTitle').innerHTML = dashboardData.improvementsChartTitle + ' <span class="edit-icon">✏️</span>';
+            document.getElementById('complimentsYoYTitle').innerHTML = dashboardData.complimentsYoYTitle + ' <span class="edit-icon">✏️</span>';
+            document.getElementById('complaintsYoYTitle').innerHTML = dashboardData.complaintsYoYTitle + ' <span class="edit-icon">✏️</span>';
+            document.getElementById('improvementsYoYTitle').innerHTML = dashboardData.improvementsYoYTitle + ' <span class="edit-icon">✏️</span>';
+        }
+
+        // Tab switching
+        function showTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Modal functions
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('customerCareData', JSON.stringify(dashboardData));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('customerCareData');
+            if (saved) {
+                dashboardData = JSON.parse(saved);
+            }
+        }
+
+        
+
+        
+
+        
+
+        function renderDetailedLogs() {
+            // Render Complaints Log
+            let complaintsHtml = '<h3 style="color: #667eea; margin-bottom: 25px;">Detailed Complaints Log</h3>';
+            Object.keys(dashboardData.complaints.detailedLog).forEach(dept => {
+                const items = dashboardData.complaints.detailedLog[dept];
+                complaintsHtml += `
+                    <div class="issue-category">
+                        <h4>${dept} <span class="issue-badge">${items.length} issue${items.length !== 1 ? 's' : ''}</span></h4>
+                `;
+                items.forEach(item => {
+                    complaintsHtml += `
+                        <div class="issue-item">
+                            <strong>${item.client}</strong>
+                            <p>${item.issue}</p>
+                            <span class="reason-tag ${item.reasonClass}">${item.reason}</span>
+                        </div>
+                    `;
+                });
+                complaintsHtml += '</div>';
+            });
+            document.getElementById('complaintsDetailedLog').innerHTML = complaintsHtml;
+
+            // Render Improvements Log
+            let improvementsHtml = '<h3 style="color: #667eea; margin-bottom: 25px;">Detailed Improvements Log</h3>';
+            Object.keys(dashboardData.improvements.detailedLog).forEach(dept => {
+                const items = dashboardData.improvements.detailedLog[dept];
+                improvementsHtml += `
+                    <div class="issue-category">
+                        <h4>${dept} <span class="issue-badge">${items.length} issue${items.length !== 1 ? 's' : ''}</span></h4>
+                `;
+                items.forEach(item => {
+                    improvementsHtml += `
+                        <div class="issue-item">
+                            <strong>${item.client}</strong>
+                            <p>${item.issue}</p>
+                            <span class="reason-tag ${item.reasonClass}">${item.reason}</span>
+                        </div>
+                    `;
+                });
+                improvementsHtml += '</div>';
+            });
+            document.getElementById('improvementsDetailedLog').innerHTML = improvementsHtml;
+        }
+
+        function renderEnhancements() {
+            // Check if there are any enhancements or summary
+            const hasEnhancements = Object.values(dashboardData.enhancements.categories).some(cat => cat.length > 0);
+            const hasSummary = dashboardData.enhancements.summary && dashboardData.enhancements.summary.trim() !== '';
+            
+            // Hide/show enhancements tab
+            const enhancementsTab = document.querySelector('.tab:last-child');
+            const enhancementsContent = document.getElementById('enhancements');
+            
+            if (!hasEnhancements && !hasSummary) {
+                enhancementsTab.style.display = 'none';
+                enhancementsContent.style.display = 'none';
+                return;
+            } else {
+                enhancementsTab.style.display = '';
+            }
+            
+            let html = '';
+            Object.keys(dashboardData.enhancements.categories).forEach(category => {
+                if (dashboardData.enhancements.categories[category].length > 0) {
+                    html += `
+                        <div class="enhancement-card">
+                            <h4>${category}</h4>
+                            <ul>
+                    `;
+                    dashboardData.enhancements.categories[category].forEach(item => {
+                        html += `<li>${item}</li>`;
+                    });
+                    html += '</ul></div>';
+                }
+            });
+            document.getElementById('enhancementsGrid').innerHTML = html;
+            
+            if (hasSummary) {
+                document.getElementById('enhancementsSummary').textContent = dashboardData.enhancements.summary;
+                document.querySelector('#enhancements .chart-container').style.display = '';
+            } else {
+                document.querySelector('#enhancements .chart-container').style.display = 'none';
+            }
+        }
+
+        
+
+        function updateAllStats() {
+            // Update compliments stats
+            document.getElementById('topSiloCount').textContent = dashboardData.compliments.topSiloCount;
+            document.getElementById('topSiloName').textContent = dashboardData.compliments.topSilo;
+            document.getElementById('topEmployee').textContent = dashboardData.compliments.topEmployee;
+            document.getElementById('topEmployeeDetails').textContent = dashboardData.compliments.topEmployeeDetails;
+        }
+
+        // Chart rendering
+        function renderAllCharts() {
+            renderComplimentsCharts();
+            renderComplaintsCharts();
+            renderImprovementsCharts();
+        }
+
+        function renderComplimentsCharts() {
+            if (charts.complimentsBySilo) charts.complimentsBySilo.destroy();
+            if (charts.complimentsYoY) charts.complimentsYoY.destroy();
+
+            const ctx1 = document.getElementById('complimentsBySilo').getContext('2d');
+            const datasets = Object.keys(dashboardData.compliments.departments).map((dept, index) => ({
+                label: dept,
+                data: dashboardData.compliments.departments[dept],
+                backgroundColor: Object.values(chartColors)[index % 6]
+            }));
+
+            charts.complimentsBySilo = new Chart(ctx1, {
+                type: 'bar',
+                data: { labels: months, datasets: datasets },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true }
+                    }
+                }
+            });
+
+            const ctx2 = document.getElementById('complimentsYoY').getContext('2d');
+            const complimentsYears = dashboardData.compliments.yearlyLabels;
+            charts.complimentsYoY = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: complimentsYears[0],
+                        data: dashboardData.compliments.yearly[complimentsYears[0]],
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: complimentsYears[1],
+                        data: dashboardData.compliments.yearly[complimentsYears[1]],
+                        borderColor: '#4ecdc4',
+                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: true, position: 'top' } },
+                    scales: { y: { beginAtZero: true, max: 60 } }
+                }
+            });
+        }
+
+        function renderComplaintsCharts() {
+            if (charts.complaintsByDept) charts.complaintsByDept.destroy();
+            if (charts.complaintsYoY) charts.complaintsYoY.destroy();
+            if (charts.complaintReasons) charts.complaintReasons.destroy();
+
+            const ctx1 = document.getElementById('complaintsByDept').getContext('2d');
+            const datasets = Object.keys(dashboardData.complaints.departments).map((dept, index) => ({
+                label: dept,
+                data: dashboardData.complaints.departments[dept],
+                backgroundColor: Object.values(chartColors)[index % 6]
+            }));
+
+            charts.complaintsByDept = new Chart(ctx1, {
+                type: 'bar',
+                data: { labels: months, datasets: datasets },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+
+            const ctx2 = document.getElementById('complaintsYoY').getContext('2d');
+            const complaintsYears = dashboardData.complaints.yearlyLabels;
+            charts.complaintsYoY = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: complaintsYears[0],
+                        data: dashboardData.complaints.yearly[complaintsYears[0]],
+                        borderColor: '#9b59b6',
+                        backgroundColor: 'rgba(155, 89, 182, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: complaintsYears[1],
+                        data: dashboardData.complaints.yearly[complaintsYears[1]],
+                        borderColor: '#e67e22',
+                        backgroundColor: 'rgba(230, 126, 34, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: true, position: 'top' } },
+                    scales: { y: { beginAtZero: true, max: 3, ticks: { stepSize: 1 } } }
+                }
+            });
+
+            const ctx3 = document.getElementById('complaintReasons').getContext('2d');
+            charts.complaintReasons = new Chart(ctx3, {
+                type: 'pie',
+                data: {
+                    labels: ['Process Not Followed', 'Attention to Detail', 'Technical Issues', 'Bad Service'],
+                    datasets: [{
+                        data: [5, 4, 4, 1],
+                        backgroundColor: ['#ffe0e0', '#fff3e0', '#f3e5f5', '#e3f2fd'],
+                        borderColor: ['#d32f2f', '#f57c00', '#7b1fa2', '#1976d2'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        function renderImprovementsCharts() {
+            if (charts.improvementsByDept) charts.improvementsByDept.destroy();
+            if (charts.improvementsYoY) charts.improvementsYoY.destroy();
+            if (charts.improvementReasons) charts.improvementReasons.destroy();
+
+            const ctx1 = document.getElementById('improvementsByDept').getContext('2d');
+            const datasets = Object.keys(dashboardData.improvements.departments).map((dept, index) => ({
+                label: dept,
+                data: dashboardData.improvements.departments[dept],
+                backgroundColor: Object.values(chartColors)[index % 6]
+            }));
+
+            charts.improvementsByDept = new Chart(ctx1, {
+                type: 'bar',
+                data: { labels: months, datasets: datasets },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+
+            const ctx2 = document.getElementById('improvementsYoY').getContext('2d');
+            const improvementsYears = dashboardData.improvements.yearlyLabels;
+            charts.improvementsYoY = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: improvementsYears[0],
+                        data: dashboardData.improvements.yearly[improvementsYears[0]],
+                        borderColor: '#16a085',
+                        backgroundColor: 'rgba(22, 160, 133, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: improvementsYears[1],
+                        data: dashboardData.improvements.yearly[improvementsYears[1]],
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: true, position: 'top' } },
+                    scales: { y: { beginAtZero: true, max: 3, ticks: { stepSize: 1 } } }
+                }
+            });
+
+            const ctx3 = document.getElementById('improvementReasons').getContext('2d');
+            charts.improvementReasons = new Chart(ctx3, {
+                type: 'pie',
+                data: {
+                    labels: ['Process Not Followed', 'Process Not in Place', 'Technical Issues', 'Attention to Detail'],
+                    datasets: [{
+                        data: [3, 3, 3, 2],
+                        backgroundColor: ['#ffe0e0', '#ffcdd2', '#f3e5f5', '#fff3e0'],
+                        borderColor: ['#d32f2f', '#d32f2f', '#7b1fa2', '#f57c00'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+    </script>
+
+
+</body>
+</html>
